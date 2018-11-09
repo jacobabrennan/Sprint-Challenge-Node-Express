@@ -21,18 +21,19 @@ module.exports = function(database, options){
 //== Schema Validator Middleware ===============================================
 
 function validateSchema(validator){
-    return function (request, response, next){
-        let validSchema = validator(request.body);
-        if(!validSchema){
+    return async function (request, response, next){
+        try{
+            let validSchema = await validator(request.body);
+            request.body.entryData = validSchema;
+            next();
+        }
+        catch(error){
             response.status(400);
             response.json({
                 errorMessage: "Provided data is invalid for this type of entry."
             });
             response.end();
-            return;
         }
-        request.body.entryData = validSchema;
-        next();
     };
 }
 

@@ -11,6 +11,7 @@ const express = require('express');
 const morgan  = require('morgan' );
 const cors    = require('cors'   );
 const helmet  = require('helmet' );
+const API = require('./api/api-instances.js');
 
 //-- Server Configuration & Middleware -----------
 const server = express();
@@ -21,5 +22,5 @@ server.use(express.json());
 server.listen(PORT, () => console.log(MESSAGE_SERVER_START));
 
 //-- Routing & Subcomponents ---------------------
-server.use('/users', require('./routes/users.js'));
-server.use('/posts', require('./routes/posts'));
+server.use('/projects', API.projects);
+server.use('/actions' , API.actions );
