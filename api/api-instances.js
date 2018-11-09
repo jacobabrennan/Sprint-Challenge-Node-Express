@@ -86,7 +86,7 @@ API.actions = api(actionsDatabase, {
             throw 'invalid action settings';
         }
         try{
-            let testProject = await actionsDatabase.get(project_id);
+            let testProject = await projectsDatabase.get(project_id);
             if(!testProject){ throw '';}
         } catch(error){
             throw 'invalid action settings';
