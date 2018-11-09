@@ -8,12 +8,12 @@ const projectsDatabase = require('../data/helpers/projectModel.js');
 const actionsDatabase  = require('../data/helpers/actionModel.js' );
 
 //-- Configure Export Module ---------------------
-module.exports = {};
+const API = module.exports = {};
 
 
 //== Projects API ==============================================================
 
-module.exports.projects = api(projectsDatabase, {
+API.projects = api(projectsDatabase, {
     schemaValidator: async function (body) {
         // Get values from request body
         let name = body.name;
@@ -39,10 +39,40 @@ module.exports.projects = api(projectsDatabase, {
         };
     }
 });
+API.projects.get('/:id/actions', async function (request, response, next){
+    // Attempt to find item-data in database
+    try{
+        const itemId = request.params.id;
+        let itemData = await projectsDatabase.get(itemId);
+        // Inform the user if the requested data was not found
+        if(!itemData){
+            response.status(404);
+            response.json({
+                message: "The item with the specified ID does not exist.",
+            });
+        }
+        // Send the requested data
+        else{
+            response.status(200);
+            response.json(itemData.actions);
+        }
+    }
+    // Inform user of failure (database error)
+    catch(error){
+        response.status(500);
+        response.json({
+            error: "The item information could not be retrieved.",
+        });
+    }
+    // Pass to next middleware
+    finally{
+        next();
+    }
+});
 
 //== Actions API ===============================================================
 
-module.exports.actions = api(actionsDatabase, {
+API.actions = api(actionsDatabase, {
     schemaValidator: async function (body) {
         // Get values from request body
         let project_id  = body.project_id ;
